@@ -80,6 +80,7 @@ function ShoppingCart({
           <img
             src={image}
             alt={`Product ${i + 1}`}
+            loading="lazy"
             className="w-16 h-16 object-contain"
           />
           <div>

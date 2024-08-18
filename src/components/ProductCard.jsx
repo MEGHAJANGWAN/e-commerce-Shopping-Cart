@@ -79,6 +79,7 @@ function ProductCard() {
                     <img
                       src={product.image}
                       alt={product.title}
+                      loading="lazy"
                       className="h-32 w-32 sm:h-40 sm:40 object-contain"
                     />
                   </div>
