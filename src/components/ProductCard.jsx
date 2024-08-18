@@ -18,7 +18,6 @@ function ProductCard() {
       alert("Product is already in the cart");
       return;
     }
-
     setCount((prevCount) => prevCount + 1);
     setProductPrice((prevPrice) => prevPrice + price);
     setProductImage((prevImage) => [...prevImage, image]);
@@ -30,7 +29,6 @@ function ProductCard() {
     setTimeout(() => {
       setItemAddedPopUp(false);
     }, 800);
-
   }
 
   useEffect(() => {

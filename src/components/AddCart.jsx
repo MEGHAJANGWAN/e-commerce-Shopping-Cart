@@ -3,6 +3,7 @@ import React from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import ShoppingCart from "./ShoppingCart";
 
+// cart component 
 function AddCart({
   count,
   productPrice,
@@ -34,9 +35,6 @@ function AddCart({
           <h2 className="text-2xl sm:text-3xl">{count}</h2>
           {/* format the productPrice to have three digits after the decimal point */}
           <h2 className="text-2xl sm:text-3xl">
-            {/* {productPrices.length < 1
-              ? "0.00"
-              : `${parseFloat(productPrice).toFixed(2)}`} */}
             ${parseFloat(productPrice).toFixed(2)}
           </h2>
         </div>
