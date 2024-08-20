@@ -6,11 +6,11 @@ import ShoppingCart from "./ShoppingCart";
 // cart component 
 function AddCart({
   count,
-  productPrice,
   cart,
   setCart,
   productImage,
   setProductImage,
+  productPrice,
   setProductPrice,
   productPrices,
   setProductPrices,
@@ -20,6 +20,9 @@ function AddCart({
   itemAddedPopUp,
   setQuantity,
   quantity,
+  basePrice,
+  setBasePrice,
+  setDiscountCardShown,
 }) {
   return (
     <div className="sticky top-0 z-0">
@@ -29,6 +32,7 @@ function AddCart({
           onClick={() => setCart((prevState) => !prevState)}
         >
           <FaShoppingCart className="h-full w-full" />
+          {/* {console.log(productPrice, "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")} */}
         </button>
 
         <div className="flex items-center gap-10">
@@ -65,6 +69,10 @@ function AddCart({
                 productName={productName}
                 quantity={quantity}
                 setQuantity={setQuantity}
+                productPrice={productPrice}
+                basePrice={basePrice}
+                setBasePrice={setBasePrice}
+                setDiscountCardShown={setDiscountCardShown}
               />
             </div>
           </div>

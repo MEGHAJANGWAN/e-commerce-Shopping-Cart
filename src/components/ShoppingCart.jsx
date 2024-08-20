@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { MdOutlineArrowDropUp, MdOutlineArrowDropDown } from "react-icons/md";
 
@@ -13,41 +13,52 @@ function ShoppingCart({
   productName,
   setQuantity,
   quantity,
+  productPrice,
+  basePrice,
+  setBasePrice,
+  setDiscountCardShown,
 }) {
+
+  function calculateBasePrice(updatedQuantities, updatedPrices) {
+    return updatedPrices.reduce((acc, price, idx) => {
+      return acc + price * updatedQuantities[idx];
+    }, 0);
+  }
+
   // Function to increase the quantity of a product
   function increaseQuantity(index) {
     const updatedQuantities = [...quantity];
-    updatedQuantities[index] = parseInt(updatedQuantities[index], 10) + 1;
+    updatedQuantities[index] += 1;
     setQuantity(updatedQuantities);
 
-    // Update total price
-    const updatedPrices = [...productPrices];
-    const newTotalPrice = updatedPrices.reduce((acc, price, idx) => {
-      return acc + price * updatedQuantities[idx];
-    }, 0);
+    const newBasePrice = calculateBasePrice(updatedQuantities, productPrices);
+    setBasePrice(newBasePrice);
 
-    setProductPrice(newTotalPrice);
+    if (newBasePrice >= 2000) {
+      setProductPrice(newBasePrice - 200); // Apply discount
+    } else {
+      setProductPrice(newBasePrice); // No discount
+    }
 
-    // Update total product count
     setCount((prevCount) => prevCount + 1);
   }
 
   // Function to decrease the quantity of a product
   function decreaseQuantity(index) {
     const updatedQuantities = [...quantity];
-    const currentQuantity = parseInt(updatedQuantities[index], 10);
-    if (currentQuantity > 1) {
-      updatedQuantities[index] = currentQuantity - 1;
+    if (updatedQuantities[index] > 1) {
+      updatedQuantities[index] -= 1;
       setQuantity(updatedQuantities);
 
-      // Update total price
-      const updatedPrices = [...productPrices];
-      const newTotalPrice = updatedPrices.reduce((acc, price, idx) => {
-        return acc + price * updatedQuantities[idx];
-      }, 0);
-      setProductPrice(newTotalPrice);
+      const newBasePrice = calculateBasePrice(updatedQuantities, productPrices);
+      setBasePrice(newBasePrice);
 
-      // Update total product count
+      if (newBasePrice >= 2000) {
+        setProductPrice(newBasePrice - 200); // Apply discount
+      } else {
+        setProductPrice(newBasePrice); // No discount
+      }
+
       setCount((prevCount) => prevCount - 1);
     }
   }
@@ -55,8 +66,6 @@ function ShoppingCart({
   // Function to delete a product from the cart
   function deleteProduct(index) {
     const updatedImages = productImage.filter((_, i) => index !== i);
-    const removedQuantity = quantity[index];
-    const removedPrice = productPrices[index] * removedQuantity;
     const updatedPrices = productPrices.filter((_, i) => index !== i);
     const updatedNames = productName.filter((_, i) => index !== i);
     const updatedQuantities = quantity.filter((_, i) => index !== i);
@@ -65,7 +74,17 @@ function ShoppingCart({
     setProductPrices(updatedPrices);
     setProductName(updatedNames);
     setQuantity(updatedQuantities);
-    setProductPrice((prevPrice) => prevPrice - removedPrice);
+
+    const newBasePrice = calculateBasePrice(updatedQuantities, updatedPrices);
+    setBasePrice(newBasePrice);
+
+    if (newBasePrice >= 2000) {
+      setProductPrice(newBasePrice - 200); // Apply discount
+    } else {
+      setProductPrice(newBasePrice); // No discount
+    }
+
+    const removedQuantity = quantity[index];
     setCount((prevCount) => prevCount - removedQuantity);
   }
 

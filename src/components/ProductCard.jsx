@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import AddCart from "./AddCart";
+import DiscountPopUp from "./Discount";
 
 function ProductCard() {
   const [products, setProducts] = useState([]);
@@ -13,8 +14,12 @@ function ProductCard() {
   const [productName, setProductName] = useState([]);
   const [quantity, setQuantity] = useState([]);
   const [itemAddedPopUp, setItemAddedPopUp] = useState(false);
+  const [discountCard, setDiscountCard] = useState(false);
+  const [discountCardShown, setDiscountCardShown] = useState(false); // track if the discount card has been shown
+  const [basePrice, setBasePrice] = useState(0); // track the base total price without any discount
+
   function addProduct(price, image, title) {
-    if(productName.includes(title)) {
+    if (productName.includes(title)) {
       alert("Product is already in the cart");
       return;
     }
@@ -23,7 +28,7 @@ function ProductCard() {
     setProductImage((prevImage) => [...prevImage, image]);
     setProductPrices((prevPrices) => [...prevPrices, price]); // add price
     setProductName((prevName) => [...prevName, title]);
-    setQuantity((prevQuantity) => [...prevQuantity, 1])
+    setQuantity((prevQuantity) => [...prevQuantity, 1]);
     setItemAddedPopUp(true);
 
     setTimeout(() => {
@@ -35,7 +40,7 @@ function ProductCard() {
     async function downloadProducts() {
       try {
         const response = await axios.get("https://fakestoreapi.com/products");
-        console.log(response.data);
+        // console.log(response.data);
 
         setProducts(response.data);
       } catch (error) {
@@ -45,8 +50,25 @@ function ProductCard() {
     downloadProducts();
   }, []);
 
+  useEffect(() => {
+    if (productPrice <= 2000) {
+      setDiscountCard(true);
+      setDiscountCardShown(true); // Optionally track that the discount card has been shown
+    }
+  }, [productPrice]);
+
   return (
     <>
+      {productPrice >= 2000
+        ? discountCard && (
+            <DiscountPopUp
+              discountCard={discountCard}
+              setDiscountCard={setDiscountCard}
+              productPrice={productPrice}
+              setProductPrice={setProductPrice}
+            />
+          )
+        : null}
       <div className="relative z-0">
         <AddCart
           addProduct={addProduct}
@@ -66,7 +88,13 @@ function ProductCard() {
           setItemAddedPopUp={setItemAddedPopUp}
           quantity={quantity}
           setQuantity={setQuantity}
+          basePrice={basePrice}
+          setBasePrice={setBasePrice}
+          setDiscountCardShown={setDiscountCardShown}
         />
+        <div className="h-20 w-full bg-green-500 mt-4 flex items-center justify-center text-white font-bold">
+          <h2 className="text-3xl">Get $ 200 of discount upto $ 2000</h2>
+        </div>
         <div className="flex items-center justify-center flex-col">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 m-6">
             {products.length > 0 ? (
