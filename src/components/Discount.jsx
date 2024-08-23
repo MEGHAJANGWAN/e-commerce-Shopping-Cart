@@ -1,15 +1,21 @@
 "use client";
-import React from "react";
+import CartContext from "@/contexts/CartContext";
+import React, { useContext } from "react";
 import { FaPlus } from "react-icons/fa";
 
-function DiscountPopUp({ setDiscountCard, productPrice }) {
+function DiscountPopUp() {
+  const {dispatch} = useContext(CartContext);
   return (
     <div className="w-full h-screen flex items-center justify-center fixed top-0 left-0 z-50 bg-black bg-opacity-50">
       <div className="h-[60vh] w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] border rounded-3xl p-4 sm:p-6 bg-gray-200">
         <div className="w-full flex justify-end">
           <button
             className="transform rotate-45"
-            onClick={() => setDiscountCard(false)}
+            onClick={() => 
+              dispatch({
+                type: "discountCardShowHide"
+              })
+            }
           >
             <FaPlus className="text-2xl sm:text-3xl" />
           </button>

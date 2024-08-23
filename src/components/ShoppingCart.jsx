@@ -1,96 +1,14 @@
-import React, { useEffect } from "react";
+import CartContext from "@/contexts/CartContext";
+import React, { createContext, useContext } from "react";
 import { FaPlus } from "react-icons/fa";
 import { MdOutlineArrowDropUp, MdOutlineArrowDropDown } from "react-icons/md";
 
-function ShoppingCart({
-  productImage,
-  setProductImage,
-  setProductPrice,
-  productPrices,
-  setProductPrices,
-  setCount,
-  setProductName,
-  productName,
-  setQuantity,
-  quantity,
-  productPrice,
-  basePrice,
-  setBasePrice,
-  setDiscountCardShown,
-}) {
-
-  function calculateBasePrice(updatedQuantities, updatedPrices) {
-    return updatedPrices.reduce((acc, price, idx) => {
-      return acc + price * updatedQuantities[idx];
-    }, 0);
-  }
-
-  // Function to increase the quantity of a product
-  function increaseQuantity(index) {
-    const updatedQuantities = [...quantity];
-    updatedQuantities[index] += 1;
-    setQuantity(updatedQuantities);
-
-    const newBasePrice = calculateBasePrice(updatedQuantities, productPrices);
-    setBasePrice(newBasePrice);
-
-    if (newBasePrice >= 2000) {
-      setProductPrice(newBasePrice - 200); // Apply discount
-    } else {
-      setProductPrice(newBasePrice); // No discount
-    }
-
-    setCount((prevCount) => prevCount + 1);
-  }
-
-  // Function to decrease the quantity of a product
-  function decreaseQuantity(index) {
-    const updatedQuantities = [...quantity];
-    if (updatedQuantities[index] > 1) {
-      updatedQuantities[index] -= 1;
-      setQuantity(updatedQuantities);
-
-      const newBasePrice = calculateBasePrice(updatedQuantities, productPrices);
-      setBasePrice(newBasePrice);
-
-      if (newBasePrice >= 2000) {
-        setProductPrice(newBasePrice - 200); // Apply discount
-      } else {
-        setProductPrice(newBasePrice); // No discount
-      }
-
-      setCount((prevCount) => prevCount - 1);
-    }
-  }
-
-  // Function to delete a product from the cart
-  function deleteProduct(index) {
-    const updatedImages = productImage.filter((_, i) => index !== i);
-    const updatedPrices = productPrices.filter((_, i) => index !== i);
-    const updatedNames = productName.filter((_, i) => index !== i);
-    const updatedQuantities = quantity.filter((_, i) => index !== i);
-
-    setProductImage(updatedImages);
-    setProductPrices(updatedPrices);
-    setProductName(updatedNames);
-    setQuantity(updatedQuantities);
-
-    const newBasePrice = calculateBasePrice(updatedQuantities, updatedPrices);
-    setBasePrice(newBasePrice);
-
-    if (newBasePrice >= 2000) {
-      setProductPrice(newBasePrice - 200); // Apply discount
-    } else {
-      setProductPrice(newBasePrice); // No discount
-    }
-
-    const removedQuantity = quantity[index];
-    setCount((prevCount) => prevCount - removedQuantity);
-  }
+function ShoppingCart() {
+  const { state, dispatch } = useContext(CartContext);
 
   return (
     <div className="max-h-full overflow-y-auto flex flex-col items-center">
-      {productImage.map((image, i) => (
+      {state.productImage.map((image, i) => (
         <div
           key={i}
           className="flex flex-col sm:flex-row justify-evenly items-center w-full max-w-xl p-4 border border-gray-200 rounded-lg shadow-sm"
@@ -105,27 +23,37 @@ function ShoppingCart({
           <div>
             <div className="flex-1 text-center sm:text-left">
               <h3 className="text-md sm:text-lg font-medium">
-                ${productPrices < 1 ? 0.0 : productPrices[i].toFixed(2)}
+                ${state.productPrices < 1 ? 0.0 : state.productPrices[i].toFixed(2)}
               </h3>
               <h3 className="text-sm sm:text-base">
-                {productName[i].split(" ").length > 4
-                  ? productName[i].split(" ").slice(0, 3).join(" ") + "..."
-                  : productName[i]}
+                {state.productName[i].split(" ").length > 4
+                  ? state.productName[i].split(" ").slice(0, 3).join(" ") + "..."
+                  : state.productName[i]}
               </h3>
             </div>
           </div>
           <div className="border border-black rounded-lg p-2 flex items-center gap-4">
-            <p>Qty: {quantity[i]}</p>
+            <p>Qty: {state.quantities[i]}</p>
             <div className="flex flex-col gap-1">
               <button
                 className="border border-black rounded-sm"
-                onClick={() => increaseQuantity(i)}
+                onClick={() =>
+                  dispatch({
+                    type: "increaseQuantity",
+                    payload: { index: i },
+                  })
+                }
               >
                 <MdOutlineArrowDropUp />
               </button>
               <button
                 className="border border-black rounded-sm"
-                onClick={() => decreaseQuantity(i)}
+                onClick={() =>
+                  dispatch({
+                    type: "decreaseQuantity",
+                    payload: { index: i },
+                  })
+                }
               >
                 <MdOutlineArrowDropDown />
               </button>
@@ -133,7 +61,12 @@ function ShoppingCart({
           </div>
           <button
             className="text-xl transform rotate-45"
-            onClick={() => deleteProduct(i)}
+            onClick={() =>
+              dispatch({
+                type: "deleteProduct",
+                payload: { index: i },
+              })
+            }
           >
             <FaPlus />
           </button>
